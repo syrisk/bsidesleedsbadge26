@@ -1060,26 +1060,6 @@ bool playFindTheSequenceTwoPlayer()
   return leftScore != rightScore;
 }
 
-// ============================================================================
-//  DRUMLINE  -  a rhythm mini-game for the BSides Leeds 2026 "Artie" badge
-// ============================================================================
-//
-//  Notes (colours) scroll around the eye-rings toward a fixed "hit zone" LED.
-//  Tap the matching colour pad while a note sits in the hit zone to clear it.
-//  Wrong colour, or letting a note slip past, costs a life. Survive the song.
-//
-//  Reuses helpers already in firmware.ino: colorForIndex, setAllLeds,
-//  getPressedTouchMask, randomColorIndex, enableRebootOnButton,
-//  disableRebootOnButton, showSuccess, showFailure, the *_MASK constants,
-//  RgbColor and the COLOR_* palette.
-//
-//  PLACEMENT: paste this whole block into firmware.ino just after
-//  playFindTheSequenceTwoPlayer() and before the animation section.
-//  Everything it needs from the file is already defined above that point.
-//
-//  THREE integration edits are listed at the bottom of this file.
-// ============================================================================
-
 static const uint8_t DRUMLINE_LANE_LENGTH = 9;   // one eye-ring = 9 positions
 static const uint8_t DRUMLINE_SONG_NOTES   = 20;  // notes to clear to win
 static const uint8_t DRUMLINE_LIVES        = 5;   // misses + wrong taps allowed
@@ -1087,15 +1067,9 @@ static const uint8_t DRUMLINE_SPAWN_GAP    = 2;   // empty ticks between notes
 static const uint16_t DRUMLINE_START_TICK_MS = 320; // slow at first...
 static const uint16_t DRUMLINE_MIN_TICK_MS   = 150; // ...ramps to this
 
-// Ring order, hit zone first (index 0). Same physical order as the spin
-// animation, so notes appear to circle into the target. If you place this
-// block AFTER the SPIN_LEDS_LEFT / SPIN_LEDS_RIGHT arrays you can delete these
-// two and use those instead to save ~18 bytes of flash.
 const uint8_t DRUMLINE_LEFT_ORDER[] PROGMEM  = { 7, 8, 0, 1, 2, 3, 4, 5, 6 };
 const uint8_t DRUMLINE_RIGHT_ORDER[] PROGMEM = { 10, 9, 17, 16, 15, 14, 13, 12, 11 };
 
-// Reduce a (possibly multi-pad) touch mask to a single colour, red-priority.
-// Either eye's pad for a colour counts, matching the other games' behaviour.
 bool maskToAnyColor(uint8_t mask, uint8_t &colorIndex)
 {
   if (mask & (LEFT_RED_MASK | RIGHT_RED_MASK)) {
@@ -1113,8 +1087,6 @@ bool maskToAnyColor(uint8_t mask, uint8_t &colorIndex)
   return false;
 }
 
-// Non-blocking hit/miss feedback: recolour just the hit-zone LEDs. It stays
-// until the next full lane render, so it never disturbs the rhythm timing.
 void blipHitZone(RgbColor color)
 {
   const uint8_t leftLed = pgm_read_byte(&DRUMLINE_LEFT_ORDER[0]);
@@ -1246,36 +1218,6 @@ bool playDrumline()
   disableRebootOnButton();
   return wonGame;
 }
-
-// ============================================================================
-//  INTEGRATION  -  three small edits to the rest of firmware.ino
-// ============================================================================
-//
-//  1) LAUNCH IT.  All six single-pad slots are already taken (3 left = solo
-//     games, 3 right = two-player). Drumline launches from a two-pad CHORD.
-//     In handleWakeButtonPress(), add one case to the switch (pressedMask):
-//
-//        case (LEFT_RED_MASK | LEFT_BLUE_MASK):
-//          playDrumline();
-//          break;
-//
-//     i.e. hold the left-eye RED and BLUE pads together, then tap the button.
-//     (Pick any free chord you like; just keep it distinct from the singles.)
-//
-//  2) THE WIN BIT is already handled above (state & B11110111). It persists to
-//     EEPROM via showSuccess(), exactly like the other games.
-//
-//  3) OPTIONAL UNLOCK ANIMATION gated on beating Drumline. In
-//     runAnimationMode(), add a case before `default:` (e.g. case 11):
-//
-//        case 11:
-//          if ((state & B00001000) != 0) { return 0; }   // bit 3 still set
-//          return spinMode(step, 0, 3, 1, 0, 3, 1, 75);  // green/teal spin
-//
-//     And if you want the devsecops "you beat everything" boot animation to
-//     require Drumline too, change its guard in case 5 from B00000111 to
-//     B00001111 so all four game bits must be clear.
-// ============================================================================
 
 const uint8_t KNIGHT_RIDER_LEDS[] PROGMEM = {
   2, 255,
