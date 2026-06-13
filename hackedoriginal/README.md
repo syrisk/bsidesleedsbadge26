@@ -25,9 +25,9 @@ one two-player game for the flash space to make it all fit.
   infinity, two nuclear variants, police) until you beat the games. The gates are
   removed; every animation is in the cycle from first boot.
 - **Two-player Find the Sequence removed** — its menu entry is deleted so the linker
-  strips the code. This is what pays for Drumline (see *Flash budget*). The right-eye
+  strips the code. This is what pays for GuitarZero (see *Flash budget*). The right-eye
   **red** pad therefore does nothing in the menu — that’s intentional, not a fault.
-- Game wins are still recorded to EEPROM (including a new bit for Drumline), they just
+- Game wins are still recorded to EEPROM (including a new bit for GuitarZero), they just
   no longer gate anything.
 
 ## Controls
@@ -47,7 +47,7 @@ when you tap it.
 |Left **blue**               |Stop the Light (solo)           |
 |Left **red**                |Find the Sequence (solo)        |
 |Left **green**              |Follow the Sequence (solo)      |
-|Left **red + blue** together|**Drumline** (new)              |
+|Left **red + blue** together|**GuitarZero** (new)              |
 |Right **blue**              |Stop the Light (two-player)     |
 |Right **green**             |Follow the Sequence (two-player)|
 |Right **red**               |— (removed in this fork)        |
@@ -118,7 +118,7 @@ Byte 0 of EEPROM holds a progress bitfield. Bits start at 1 (factory EEPROM read
 |0  |Stop the Light (solo)     |
 |1  |Follow the Sequence (solo)|
 |2  |Find the Sequence (solo)  |
-|3  |Drumline                  |
+|3  |GuitarZero                |
 
 In stock firmware these bits gated the hidden animations. Here they’re recorded but
 gate nothing — they survive power-off, so they still work as a personal scoreboard.
@@ -156,8 +156,8 @@ free**. That margin was hard-won — measured numbers from the trim:
 
 |Variant                                  |Flash   |vs 8192      |
 |-----------------------------------------|--------|-------------|
-|Stock-style build, Drumline as dead code |8126    |+66 free     |
-|Drumline wired into the menu             |8636    |−444 **over**|
+|Stock-style build, GuitarZero as dead code |8126    |+66 free     |
+|GuitarZero wired into the menu             |8636    |−444 **over**|
 |+ reuse spin LED tables (drop duplicates)|8618    |−426 over    |
 |+ remove 2P Find the Sequence menu entry |**8064**|**+128 free**|
 
