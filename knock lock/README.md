@@ -137,7 +137,7 @@ Flash via UPDI as usual for this badge.
 
 - Badge hardware and platform: **Punk Security** —
   [punk-security/bsides-leeds-2026-badge](https://github.com/punk-security/bsides-leeds-2026-badge)
-- Secret knock lock firmware: community project
+- Secret knock lock firmware: syrisk project
 - Knock-matching approach inspired by the classic Arduino “secret knock” detector
   (normalize inter-event timing, compare within tolerance).
 
